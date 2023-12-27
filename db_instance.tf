@@ -60,6 +60,15 @@ resource "aws_security_group_rule" "db_mysql" {
   source_security_group_id = module.webserver_instance.security_group_id
 }
 
+resource "aws_security_group_rule" "ansible_mysql" {
+  security_group_id = module.db_instance.security_group_id
+  type              = "ingress"
+  from_port         = 3306
+  to_port           = 3306
+  protocol          = "tcp"
+  source_security_group_id = module.ansible_instance.security_group_id
+}
+
 resource "aws_security_group_rule" "db_egress_rule" {
   security_group_id =module.db_instance.security_group_id
   type        = "egress"
