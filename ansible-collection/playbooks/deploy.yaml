@@ -1,0 +1,10 @@
+---
+- name: Deploy Flask app to EC2 instances
+  hosts: webservers
+  become: yes
+  vars:
+    app_directory: "/home/ec2-user/flaskapp"
+    app_user: "ec2-user"
+  roles:
+    - my_ansible/my_collection/roles/flask_app
+
