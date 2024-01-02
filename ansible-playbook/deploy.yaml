@@ -1,0 +1,71 @@
+---
+- name: Deploy Flask app to EC2 instance
+  hosts: webservers  # Update with your host group or individual IP
+  become: yes  # Gain superuser privileges
+  vars:
+    app_directory: "/home/ec2-user/flask_app"  # Update with the actual path to your Flask application on the EC2 instance
+  tasks: 
+    - name: Install required packages for Flask app
+      yum:
+        name:
+          - python3
+          - python3-pip
+          - python3-devel
+          - mysql-devel
+          - gcc
+   
+
+
+    - name: Install required Python packages
+      pip:
+        name:
+          - flask
+          - pymysql
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+        executable: pip3
+    
+
+    - name: Copy application files to webserver
+        
+      copy:
+        src: /home/ec2-user/flask_app/   # Correct path to the source directory
+        dest: /home/ec2-user/flask_app/  # Correct path to the destination
+
+    - name: Ensure app.py is executable
+      file:
+        path: "{{ app_directory }}/app.py"
+        mode: '0755'  # Making the script executable
+
+    - name: Run the Flask application
+      command: python3 /home/ec2-user/flask_app/app.py
+      # args:
+      #   chdir: "{{ app_directory }}/templates/app.py"
+      become_user: ec2-user  # or another user as needed
+
+
+
+     
+
+# - name: Copy Flask app code
+#   template:
+#     src: app.py.j2
+#     dest: /home/ec2-user/ansible-project-3.method/template/app.py
+#   become: yes
+
+# - name: Copy HTML template
+#   template:
+#     src: index.html.j2
+#     dest: /home/ec2-user/ansible-project-3.method/template/index.html
+#   become: yes
+
+# - name: Set up Flask app service 
+#   systemd:
+#     name: flask_app
+#     enabled: yes
+#     state: started
+#     daemon_reload: yes
+#   become: yes
+#   vars:
+#     service_name: flask_app
+
